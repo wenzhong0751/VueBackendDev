@@ -1,25 +1,38 @@
-import Cookies from 'js-cookie'
+import Cookies from "js-cookie";
 
 const state = {
     // 用户名
-    name: ''
-}
+    name: "",
+    // 用户对象
+    user: ""
+};
 
 const mutations = {
     setName: (state, data) => {
-        if(data){
-            Cookies.set('userName', encodeURIComponent(data), {
+        console.log("setUsername:" + data);
+        if (data) {
+            Cookies.set("userName", encodeURIComponent(data), {
                 expires: 365
-            })
+            });
         } else {
-            Cookies.remove('userName')
+            Cookies.remove("userName");
         }
-        state.name = data
+        state.name = data;
+    },
+
+    setUser: (state, data) => {
+        console.log("setUser:" + data);
+        if (data) {
+            Cookies.set("user", encodeURIComponent(data), { expires: 365 });
+        } else {
+            Cookies.remove("user");
+        }
+        state.user = data;
     }
-}
+};
 
 export default {
     namespaced: true,
     state,
     mutations
-}
+};
