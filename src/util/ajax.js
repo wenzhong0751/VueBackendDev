@@ -110,7 +110,7 @@ service.interceptors.request.use(
         }else{
             console.log("开始检查Token...")
             checkTokenSwz(cancel, () => {
-                console.log("开始增加头部信息...")
+                console.log("开始增加头部信息...",`${store.state.auth.appId}`,`${store.state.auth.jwt}`)
                 config.headers.Authorization = `${store.state.auth.jwt}`;
                 config.headers.appId = `${store.state.auth.appId}`;
             });
@@ -139,7 +139,7 @@ service.interceptors.response.use(
                 // 注意，不能保证500ms必定执行，详情请了解JS的异步机制
                 setTimeout(function() {
                     console.log("remove url:" + requestList[i],i,response.config.url);
-                    requestList.splice(i, 1);
+                    requestList.splice(requestList.findIndex(item => item === response.config.url), 1);
                 }, 50);
                 // 这里原本为500ms
                 break;

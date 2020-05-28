@@ -183,25 +183,21 @@ const actions = {
         return new Promise(resolve => {
             axios({
                 url: "http://127.0.0.1:8080/resource/authorityMenu",
-                // url: "http://192.168.0.164:8080/account/register?tokenKey=get",
                 method: "get"
             }).then(res => {
-                console.log("getMenu res:" + res);
+                console.log("getMenu res:", res);
                 let localMenus = [];
                 if (res.meta.code === 6666){
                     let menus = res.data.menuTree;
-                    // menus.forEach(menu => {
-                        
-                    // });
 
                     function transMenus2local(srcArr,desArr){
                         srcArr.forEach(menu => {
                             if (menu.children && menu.children.length > 0){
                                 let children = [];
                                 transMenus2local(menu.children,children);
-                                desArr.push({name:menu.name,path:menu.uri,child:children});
+                                desArr.push({name:menu.name,path:menu.uri,icon:menu.icon,child:children});
                             }else{
-                                desArr.push({name:menu.name,path:menu.uri});
+                                desArr.push({name:menu.name,path:menu.uri,icon:menu.icon});
                             }
                         });
                     }
@@ -233,7 +229,7 @@ const actions = {
                     //     }
                         
                     // });
-                    console.log("localMenus:" + localMenus);
+                    console.log("localMenus:", localMenus);
                 }
 
                 commit("setNavList", localMenus);
