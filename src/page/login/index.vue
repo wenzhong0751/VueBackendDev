@@ -39,7 +39,7 @@
                         ></el-input>
                     </el-form-item>
                     <p class="textR">{{ $t("global.forgetPassword") }}</p>
-                    <a class="btn-login" type="primary" @click="submitForm()">{{
+                    <a class="btn-login" type="primary" autofocus=true @click="submitForm()">{{
                         $t("global.login")
                     }}</a>
                 </el-form>

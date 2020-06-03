@@ -126,6 +126,15 @@ const staticRoute = [
                 path: "resource",
                 component: () => import("../page/manager/resource"),
             },
+            {
+                path: "api",
+                component: () => import("../page/manager/api"),
+            },
+            {
+                path: "log",
+                component: () => import("../page/manager/log"),
+            }
+            
         ],
     },
     {

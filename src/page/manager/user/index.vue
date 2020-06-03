@@ -8,7 +8,7 @@
                 <el-form-item>
                     <el-input
                         v-model="searchForm.username"
-                        placeholder="请输入用户或"
+                        placeholder="请输入用户名"
                     ></el-input>
                 </el-form-item>
 
@@ -217,7 +217,7 @@
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="editFormVisible = false">取消</el-button>
+                <el-button @click="addFormVisible = false">取消</el-button>
                 <el-button type="primary" @click="addFormSubmit()"
                     >确定</el-button
                 >

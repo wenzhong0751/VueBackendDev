@@ -185,7 +185,7 @@ const actions = {
                 url: "http://127.0.0.1:8080/resource/authorityMenu",
                 method: "get"
             }).then(res => {
-                console.log("getMenu res:", res);
+                console.log("getMenu res1:", res);
                 let localMenus = [];
                 if (res.meta.code === 6666){
                     let menus = res.data.menuTree;

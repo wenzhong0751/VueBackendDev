@@ -1,7 +1,7 @@
 <template>
     <div class="sys-page">
-        <app-title title="菜单管理"></app-title>
-        <app-notes>管理系统菜单</app-notes>
+        <app-title title="角色管理"></app-title>
+        <app-notes>管理系统角色</app-notes>
         <!-- 搜索 -->
         <app-search>
             <el-form :inline="true" :model="searchForm">
@@ -164,7 +164,7 @@
 
 <script>
 export default {
-    name: "mgrResource",
+    name: "mgrLog",
     data() {
         //
         return {
