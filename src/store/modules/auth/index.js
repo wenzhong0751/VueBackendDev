@@ -47,40 +47,6 @@ const mutations = {
             Auth.removeAppId();
         }
         state.appId = data;
-    },
-
-    getNewTokenSync:(state,data) => {
-        console.log("getNewTokenSync is call");
-
-        async function refreshToken(){
-            
-            await this.$axios({
-                url: `http://127.0.0.1:8080/account/jwt?tokenKey=refresh`,
-                headers: {
-                    appId:`${state.appId}`,
-                    Authorization:`${state.jwt}`
-                }
-            }).then((res) => {
-                console.log("refresh return",res);
-                if (res){
-                    if (res.meta.code === 1005){
-                        let data = res.data.jwt;
-                        console.log("setJwt:" + data);
-                        if (data) {
-                            Auth.setJwt(data);
-                            Auth.setLoginStatus();
-                        } else {
-                            Auth.removeJwt();
-                            Auth.removeLoginStatus();
-                        }
-                        state.jwt = data;
-                    }
-                }
-            });
-        }
-
-        refreshToken();
-        
     }
 };
 
@@ -164,10 +130,22 @@ const actions = {
     // 登出
     logout({ commit }) {
         return new Promise(resolve => {
-            commit("setToken", "");
-            commit("user/setName", "", { root: true });
-            commit("tagNav/removeTagNav", "", { root: true });
-            resolve();
+            axios({
+                transformRequest: [
+                    function(data) {
+                        data = JSON.stringify(data);
+                        return data;
+                    }
+                ],
+                url: "http://127.0.0.1:8080/user/exit",
+                method: "post"
+            }).then(res => {
+                console.log("exit res",res);
+                commit("setToken", "");
+                commit("user/setName", "", { root: true });
+                commit("tagNav/removeTagNav", "", { root: true });
+                resolve(res);
+            });
         });
     },
 
@@ -195,63 +173,8 @@ const actions = {
         });
     },
 
-    // 刷新Token
-    async getNewToken({commit,state}){
-
-        function refreshToken(){
-            return new Promise(resolve => {
-                axios({
-                    url: `http://127.0.0.1:8080/account/jwt?tokenKey=refresh`,
-                    headers: {
-                        appId:`${state.appId}`,
-                        Authorization:`${state.jwt}`
-                    }
-                }).then((res) => {
-                    console.log("refreshToken:",res);
-                    if (res){
-                        if (res.meta.code === 1005){
-                            commit("setJwt",res.data.jwt);
-                            resolve();
-                        }
-                    }
-                });
-            });
-        }
-
-        await refreshToken();
-
-        // let result = await this.$axios({
-        //     url: `http://127.0.0.1:8080/account/jwt?tokenKey=refresh`,
-        //     headers: {
-        //         appId:`${state.appId}`,
-        //         Authorization:`${state.jwt}`
-        //     }
-        // });
-
-        // console.log("result",result);
-
-        // return new Promise(resolve => {
-        //     //http://127.0.0.1:8080/account/register?tokenKey=get
-        //     axios({
-        //         url: `http://127.0.0.1:8080/account/jwt?tokenKey=refresh`,
-        //         headers: {
-        //             appId:`${state.appId}`,
-        //             Authorization:`${state.jwt}`
-        //         }
-        //     }).then((res) => {
-        //         console.log("refreshToken:",res);
-        //         if (res){
-        //             if (res.meta.code === 1005){
-        //                 commit("setJwt",res.data.jwt);
-        //                 resolve();
-        //             }
-        //         }
-        //     });
-        // });
-    },
-
     // 获取新Token
-    getNewTokenRaw({ commit, state }) {
+    getNewToken({ commit, state }) {
         return new Promise(resolve => {
             axios({
                 url: "/getToken",
