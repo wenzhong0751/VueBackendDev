@@ -47,6 +47,40 @@ const mutations = {
             Auth.removeAppId();
         }
         state.appId = data;
+    },
+
+    getNewTokenSync:(state,data) => {
+        console.log("getNewTokenSync is call");
+
+        async function refreshToken(){
+            
+            await this.$axios({
+                url: `http://127.0.0.1:8080/account/jwt?tokenKey=refresh`,
+                headers: {
+                    appId:`${state.appId}`,
+                    Authorization:`${state.jwt}`
+                }
+            }).then((res) => {
+                console.log("refresh return",res);
+                if (res){
+                    if (res.meta.code === 1005){
+                        let data = res.data.jwt;
+                        console.log("setJwt:" + data);
+                        if (data) {
+                            Auth.setJwt(data);
+                            Auth.setLoginStatus();
+                        } else {
+                            Auth.removeJwt();
+                            Auth.removeLoginStatus();
+                        }
+                        state.jwt = data;
+                    }
+                }
+            });
+        }
+
+        refreshToken();
+        
     }
 };
 
@@ -161,8 +195,63 @@ const actions = {
         });
     },
 
+    // 刷新Token
+    async getNewToken({commit,state}){
+
+        function refreshToken(){
+            return new Promise(resolve => {
+                axios({
+                    url: `http://127.0.0.1:8080/account/jwt?tokenKey=refresh`,
+                    headers: {
+                        appId:`${state.appId}`,
+                        Authorization:`${state.jwt}`
+                    }
+                }).then((res) => {
+                    console.log("refreshToken:",res);
+                    if (res){
+                        if (res.meta.code === 1005){
+                            commit("setJwt",res.data.jwt);
+                            resolve();
+                        }
+                    }
+                });
+            });
+        }
+
+        await refreshToken();
+
+        // let result = await this.$axios({
+        //     url: `http://127.0.0.1:8080/account/jwt?tokenKey=refresh`,
+        //     headers: {
+        //         appId:`${state.appId}`,
+        //         Authorization:`${state.jwt}`
+        //     }
+        // });
+
+        // console.log("result",result);
+
+        // return new Promise(resolve => {
+        //     //http://127.0.0.1:8080/account/register?tokenKey=get
+        //     axios({
+        //         url: `http://127.0.0.1:8080/account/jwt?tokenKey=refresh`,
+        //         headers: {
+        //             appId:`${state.appId}`,
+        //             Authorization:`${state.jwt}`
+        //         }
+        //     }).then((res) => {
+        //         console.log("refreshToken:",res);
+        //         if (res){
+        //             if (res.meta.code === 1005){
+        //                 commit("setJwt",res.data.jwt);
+        //                 resolve();
+        //             }
+        //         }
+        //     });
+        // });
+    },
+
     // 获取新Token
-    getNewToken({ commit, state }) {
+    getNewTokenRaw({ commit, state }) {
         return new Promise(resolve => {
             axios({
                 url: "/getToken",
@@ -234,21 +323,6 @@ const actions = {
 
                 commit("setNavList", localMenus);
                 resolve(localMenus);
-            });
-        });
-    },
-
-    // 获取该用户的菜单列表
-    getNavListRaw({ commit }) {
-        return new Promise(resolve => {
-            axios({
-                url: "/user/navlist",
-                methods: "post",
-                data: {}
-            }).then(res => {
-                console.log("getMenu res:" + res);
-                commit("setNavList", res);
-                resolve(res);
             });
         });
     },

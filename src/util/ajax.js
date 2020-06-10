@@ -7,15 +7,24 @@ import store from "../store";
 import router from "../router";
 import { Message } from "element-ui";
 import Auth from "@/util/auth";
+// import { response } from "express";
 
 var getTokenLock = false,
     CancelToken = axios.CancelToken,
     requestList = [];
 
+/**
+ * Token校验
+ * @param {function} cancel - 中断函数
+ * @param {function} callback -  回调
+ * @description 校验Token是否过期，如果Token过期则根据配置采用不同方法获取新Token
+ *              自动获取Token：过期时自动调用获取Token接口。注意：当有任一请求在获取Token时，其余请求将顺延，直至新Token获取完毕
+ *              跳转授权Token：过期时中断当前所有请求并跳转到对应页面获取Token。注意：跳转页面授权最佳实现应在授权页面点击触发
+ */
 function checkTokenSwz(cancel, callback) {
-    console.log(Auth.hasJwt());
+    console.log("hasJwt",Auth.hasJwt());
     if (!Auth.hasJwt()) {
-        console.log("jwt missing, do nothing");
+        console.log("jwt missing, refresh jwt");
     } else {
         console.log("has jwt. continue...");
         callback();
@@ -62,7 +71,7 @@ function checkToken(cancel, callback) {
             }
         }
     } else {
-        console.log("取消请求");
+        console.log("token未过期，继续执行");
         callback();
     }
 }
@@ -110,7 +119,7 @@ service.interceptors.request.use(
         }else{
             console.log("开始检查Token...")
             checkTokenSwz(cancel, () => {
-                console.log("开始增加头部信息...",`${store.state.auth.appId}`,`${store.state.auth.jwt}`)
+                console.log("开始增加头部信息...4url" + config.url,`${store.state.auth.appId}`,`${store.state.auth.jwt}`)
                 config.headers.Authorization = `${store.state.auth.jwt}`;
                 config.headers.appId = `${store.state.auth.appId}`;
             });
@@ -133,15 +142,27 @@ service.interceptors.request.use(
 // 针对响应代码确认跳转到对应页面
 service.interceptors.response.use(
     response => {
+        let rtnObj = response.data;
+        if (rtnObj){
+            if (rtnObj.meta.code === 1005){
+                // jwt过期，需要刷新
+                let newJwt = rtnObj.data.jwt;
+                console.log("refresh newJwt",newJwt);
+                store.commit("auth/setJwt",newJwt);
+                let config = response.config;
+                requestList.splice(requestList.findIndex(item => item === response.config.url), 1);
+                return service.request(config);
+            }
+        }
+        
         for (let i = 0; i < requestList.length; i++) {
             console.log("list url:" + requestList[i]);
             if (requestList[i] == response.config.url) {
                 // 注意，不能保证500ms必定执行，详情请了解JS的异步机制
                 setTimeout(function() {
-                    console.log("remove url:" + requestList[i],i,response.config.url);
+                    console.log("remove url:" + requestList[requestList.findIndex(item => item === response.config.url)],requestList.findIndex(item => item === response.config.url),response.config.url);
                     requestList.splice(requestList.findIndex(item => item === response.config.url), 1);
-                }, 50);
-                // 这里原本为500ms
+                }, 500);
                 break;
             }
         }

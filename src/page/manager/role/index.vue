@@ -160,60 +160,59 @@
         </el-dialog>
 
         <!-- 分配菜单 -->
-        <el-dialog title="分配菜单" :visible.sync="assignMenuDlgVisible">
-            <el-tree
-                :props="props"
-                :data="menuData"
-                node-key="rid"
-                show-checkbox
-                ref="menuTreeRef"
-                @check-change="handleMenuCheckChange"
-            >
-            </el-tree>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click="assignMenuDlgVisible = false"
-                    >取消</el-button
+        <div v-if="assignMenuDlgVisible">
+            <el-dialog :title="assignMenuDlgTitle" :visible.sync="assignMenuDlgVisible">
+                <el-tree
+                    :props="props"
+                    :data="menuData"
+                    node-key="rid"
+                    show-checkbox
+                    ref="menuTreeRef"
+                    @check-change="handleMenuCheckChange"
                 >
-                <el-button type="primary" @click="assignMenuDlgSubmit()"
-                    >确定</el-button
-                >
-            </div>
-        </el-dialog>
+                </el-tree>
+                <div slot="footer" class="dialog-footer">
+                    <el-button @click="assignMenuDlgVisible = false"
+                        >取消</el-button
+                    >
+                    <el-button type="primary" @click="assignMenuDlgSubmit()"
+                        >确定</el-button
+                    >
+                </div>
+            </el-dialog>
+        </div>
 
         <!-- 分配API -->
         <div v-if="assignApiDlgVisible">
-        <el-dialog :title="assignApiDlgTitle" :visible.sync="assignApiDlgVisible">
-            <el-tree
-                :props="props"
-                node-key="rid"
-                show-checkbox
-                lazy
-                :load="loadApiNode"
-                ref="apiTreeRef"
-                @node-expand="handleApiExpand"
-                :expand-on-click-node="false"
-                @check-change="handleApiCheckChange"
-            >
-                <span class="custom-tree-node" slot-scope="{ node, data }">
-                    <span>{{ node.label }}</span>
-                    <span>
-
-                        <el-button v-show="node.isLeaf && !node.checked" type="text" size="mini" @click="grantAPI(data,node)"
-                            >授予</el-button
-                        >
-                        <el-button v-show="node.isLeaf && node.checked" type="text" size="mini" @click="revokeAPI(data,node)"
-                            >收回</el-button
-                        >
-                    </span>
-                </span>
-            </el-tree>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click="assignApiDlgVisible = false">取消</el-button>
-                <el-button type="primary" @click="assignApiDlgSubmit()"
-                    >确定</el-button
+            <el-dialog :title="assignApiDlgTitle" :visible.sync="assignApiDlgVisible">
+                <el-tree
+                    :props="props"
+                    node-key="rid"
+                    show-checkbox
+                    lazy
+                    :load="loadApiNode"
+                    ref="apiTreeRef"
+                    @node-expand="handleApiExpand"
+                    :expand-on-click-node="false"
+                    @check-change="handleApiCheckChange"
                 >
-            </div>
-        </el-dialog>
+                    <span class="custom-tree-node" slot-scope="{ node, data }">
+                        <span>{{ node.label }}</span>
+                        <span>
+
+                            <el-button v-show="node.isLeaf && !node.checked" type="text" size="mini" @click="grantAPI(data,node)"
+                                >授予</el-button
+                            >
+                            <el-button v-show="node.isLeaf && node.checked" type="text" size="mini" @click="revokeAPI(data,node)"
+                                >收回</el-button
+                            >
+                        </span>
+                    </span>
+                </el-tree>
+                <div slot="footer" class="dialog-footer">
+                    <el-button @click="assignApiDlgVisible = false">关闭</el-button>
+                </div>
+            </el-dialog>
         </div>
     </div>
 </template>
@@ -302,6 +301,7 @@ export default {
 
             //分配菜单相关 不使用lazy
             assignMenuDlgVisible: false,
+            assignMenuDlgTitle: "分配菜单",
             assignRoleId: "",
             menuData: [],
             hasMenusData: [],
@@ -330,7 +330,7 @@ export default {
                 params: { rid: `${rid}` },
             })
                 .then((res) => {
-                    console.log("res", res);
+                    console.log("res4rolelist", res);
 
                     if (res.meta.code === 6666) {
                         let pageInfo = res.data.pageInfo;
@@ -507,6 +507,7 @@ export default {
             //
             let rid = row.rid;
             this.assignRoleId = row.rid;
+            this.assignMenuDlgTitle = "为角色[" + rid + "]分配菜单";
             //获取用户授权的角色列表
             this.$axios({
                 url: `http://127.0.0.1:8080/resource/menus`,

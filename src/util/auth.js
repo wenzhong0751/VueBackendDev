@@ -44,7 +44,7 @@ const authToken = {
 
     // 设置jwt
     setJwt: function(jwt) {
-        let maxAge = new Date(new Date().getTime() + 30 * 60 * 1000);
+        let maxAge = new Date(new Date().getTime() + 10 * 60 * 1000);
         Cookies.set("jwt", jwt, { expires: maxAge });
     },
 
