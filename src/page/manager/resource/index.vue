@@ -3,94 +3,60 @@
         <app-title title="菜单管理"></app-title>
         <app-notes>管理系统菜单</app-notes>
         <!-- 搜索 -->
-        <app-search>
-            <el-form :inline="true" :model="searchForm">
-                <el-form-item>
-                    <el-input
-                        v-model="searchForm.rid"
-                        placeholder="请输入角色代码"
-                    ></el-input>
-                </el-form-item>
 
-                <el-form-item>
-                    <el-button type="primary" @click="getTableData"
-                        >查询</el-button
-                    >
-                </el-form-item>
-            </el-form>
-        </app-search>
         <!-- 工具条 -->
         <app-toolbar>
             <el-button type="primary" @click="add()">新增</el-button>
         </app-toolbar>
-        <!-- 表格体 -->
-        <table-mixin
-            pagination
-            paginationAlign="center"
-            :pageSize="searchForm.pageSize"
-            :paginationTotal="searchForm.totalElements"
-            :sizeChange="handleSizeChange"
-            :pageChange="handlePageChange">
-
+        <!-- 菜单树 -->
+        <el-table
+            :data="tableData2"
+            style="width: 100%; margin-bottom: 20px;"
+            row-key="id"
+            border
+            default-expand-all
+            :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+        >
+            <el-table-column prop="date" label="日期" sortable width="180">
+            </el-table-column>
+            <el-table-column prop="name" label="姓名" sortable width="180">
+            </el-table-column>
+            <el-table-column prop="address" label="地址"> </el-table-column>
+        </el-table>
+        <el-dialog title="编辑角色" :visible.sync="treeVisible">
             <el-table
-                v-loading="tableData.loading"
-                :data="tableData.body"
+                :data="tableData"
+                style="width: 100%; margin-bottom: 20px;"
+                row-key="id"
                 border
-                stripe
-                :default-sort="{ prop: 'rid', order: 'descending' }"
-                ref="tableRef"
+                :tree-props="{
+                    children: 'children',
+                    hasChildren: 'hasChildren',
+                }"
             >
-                <el-table-column
-                    type="index"
-                    label="序号"
-                    width="64"
-                    align="center"
-                ></el-table-column>
-                <el-table-column prop="rid" label="代码" sortable>
+                <el-table-column prop="id" label="资源ID" width="100" sortable>
                 </el-table-column>
-                <el-table-column prop="role" label="角色" sortable>
+                <el-table-column prop="code" label="代码" width="100" sortable>
                 </el-table-column>
-                <el-table-column prop="description" label="描述" sortable>
+                <el-table-column prop="name" label="名称" width="180" sortable>
                 </el-table-column>
-                <el-table-column
-                    prop="status"
-                    label="是否启用"
-                    align="center"
-                >
-                    <template slot-scope="scope">
-                        <el-switch
-                            v-model="scope.row.status"
-                            :active-value="1"
-                            :inactive-value="0"
-                            active-color="#13ce66"
-                            inactive-color="#ff4949"
-                            @change="changeSwitch(scope.$index, scope.row)"
-                        />
-                    </template>
-                </el-table-column>
-                <el-table-column label="操作" align="center">
-                    <template slot-scope="scope">
-                        <el-button
-                            v-if="scope.row.operation.indexOf('edit') >= 0"
-                            type="text"
-                            size="mini"
-                            @click="edit(scope.$index, scope.row)"
-                            >修改</el-button
-                        >
-
-                        <el-button
-                            v-if="scope.row.operation.indexOf('assign') >= 0"
-                            type="primary"
-                            size="mini"
-                            @click="assign(scope.$index, scope.row)"
-                            >分配资源</el-button
-                        >
-                    </template>
+                <el-table-column prop="icon" label="图标" width="200">
                 </el-table-column>
 
+                <!--
+                <el-table-column prop="uri" label="URI">
+            </el-table-column>
+            <el-table-column prop="status" label="状态" width="100">
+            </el-table-column>
+            <el-table-column label="操作" width="120" fixed="right">
+                <template slot-scope="scope">
+                    <el-button type="text" size="mini">add</el-button>
+                    <el-button type="text" size="mini">delete</el-button>
+                </template>
+            </el-table-column>
+            -->
             </el-table>
-
-        </table-mixin>
+        </el-dialog>
 
         <!-- 编辑窗口 -->
         <el-dialog title="编辑角色" :visible.sync="editFormVisible">
@@ -110,9 +76,7 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="editFormVisible = false">取消</el-button>
-                <el-button
-                    type="primary"
-                    @click="editFormSubmit()"
+                <el-button type="primary" @click="editFormSubmit()"
                     >确定</el-button
                 >
             </div>
@@ -168,34 +132,70 @@ export default {
     data() {
         //
         return {
-            searchForm: {
-                rid: "",
-                pageSize: 10,
-                pageNumber: 1,
-                totalElements: 0,
-            },
-            tableData: {
-                loading: true,
-                head: [
-                    {
-                        key: "rid",
-                        name: "代码",
-                    },
-                    {
-                        key: "role",
-                        name: "角色",
-                    },
-                    {
-                        key: "description",
-                        name: "描述",
-                    },
-                    {
-                        key: "status",
-                        name: "是否启用",
-                    },
-                ],
-                body: [],
-            },
+            treeVisible: false,
+            tableData: [
+                {
+                    id: 1,
+                    code: "code1",
+                    name: "name1",
+                    icon: "icon1",
+                    children: [
+                        {
+                            id: 11,
+                            code: "code11",
+                            name: "name11",
+                            icon: "icon1",
+                        },
+                        {
+                            id: 12,
+                            code: "code12",
+                            name: "name12",
+                            icon: "icon1",
+                        },
+                    ],
+                },
+                { id: 2, code: "code2", name: "name2", icon: "icon1" },
+            ],
+            tableData2: [
+                {
+                    id: 1,
+                    date: "2016-05-02",
+                    name: "王小虎",
+                    address: "上海市普陀区金沙江路 1518 弄",
+                },
+                {
+                    id: 2,
+                    date: "2016-05-04",
+                    name: "王小虎",
+                    address: "上海市普陀区金沙江路 1517 弄",
+                },
+                {
+                    id: 3,
+                    date: "2016-05-01",
+                    name: "王小虎",
+                    address: "上海市普陀区金沙江路 1519 弄",
+                    children: [
+                        {
+                            id: 31,
+                            date: "2016-05-01",
+                            name: "王小虎",
+                            address: "上海市普陀区金沙江路 1519 弄",
+                        },
+                        {
+                            id: 32,
+                            date: "2016-05-01",
+                            name: "王小虎",
+                            address: "上海市普陀区金沙江路 1519 弄",
+                        },
+                    ],
+                },
+                {
+                    id: 4,
+                    date: "2016-05-03",
+                    name: "王小虎",
+                    address: "上海市普陀区金沙江路 1516 弄",
+                },
+            ],
 
             formLabelWidth: "120px",
             //编辑相关数据
@@ -204,7 +204,7 @@ export default {
             editForm: {
                 rid: "",
                 role: "",
-                description: ""
+                description: "",
             },
 
             //新增相关数据
@@ -213,7 +213,7 @@ export default {
                 rid: "",
                 role: "",
                 description: "",
-                status: 1
+                status: 1,
             },
             addFormRules: {
                 rid: [
@@ -241,59 +241,66 @@ export default {
                         message: "长度在3到15个字符",
                         trigger: "blur",
                     },
-                ]
+                ],
             },
-        }
+        };
     },
     mounted() {
-        this.getTableData();
+        // this.getTableData();
     },
     methods: {
         //查询主界面表格数据
         getTableData() {
-            let { pageSize, pageNumber, rid } = this.searchForm;
             this.$axios({
-                url: `http://127.0.0.1:8080/role/list/${pageNumber}/${pageSize}`,
-                type: "get",
-                params: { rid: `${rid}` },
+                url: `http://127.0.0.1:8080/resource/menus`,
             })
                 .then((res) => {
-                    console.log("res",res);
+                    console.log("getMenu res:", res);
+                    if (res) {
+                        if (res.meta.code === 6666) {
+                            let arr = res.data.menuTree;
 
-                    if (res.meta.code === 6666) {
-                        let pageInfo = res.data.pageInfo;
-                        this.searchForm.totalElements = pageInfo.totalElements;
-                        if (pageInfo.numberOfElements > 0) {
-                            let arr = pageInfo.content;
-                            let newArr = arr.map((item, index, arr) => {
-                                return {
-                                    rid: item.rid,
-                                    role: item.role,
-                                    description: item.description,
-                                    status: item.status,
-                                    operation: "edit,assign",
-                                };
-                            });
-                            this.tableData.body = newArr;
+                            function transMenus2local(srcArr, desArr) {
+                                srcArr.forEach((menu) => {
+                                    if (
+                                        menu.children &&
+                                        menu.children.length > 0
+                                    ) {
+                                        let children = [];
+                                        transMenus2local(
+                                            menu.children,
+                                            children
+                                        );
+                                        desArr.push({
+                                            rid: menu.rid,
+                                            name: menu.name,
+                                            code: menu.code,
+                                            icon: menu.icon,
+                                            children: children,
+                                        });
+                                    } else {
+                                        desArr.push({
+                                            rid: menu.rid,
+                                            name: menu.name,
+                                            code: menu.code,
+                                            icon: menu.icon,
+                                        });
+                                    }
+                                });
+                            }
+
+                            let newArr = [];
+                            transMenus2local(arr, newArr);
+
+                            this.tableData = newArr;
                         }
                     }
-                    this.tableData.loading = false;
                 })
                 .catch((err) => {
                     this.$message.error(
                         `获取数据失败，失败码：${err.response.status}`
                     );
                 });
-        },
-        handlePageChange(val) {
-            this.searchForm.pageNumber = val;
-            this.getTableData();
-            console.log(`当前页: ${val}`);
-        },
-        handleSizeChange(val) {
-            this.searchForm.pageSize = val;
-            this.getTableData();
-            console.log(`每页 ${val} 条`);
         },
         // 点击编辑按钮
         edit(index, row) {
@@ -310,13 +317,16 @@ export default {
                 .then((res) => {
                     console.log(res);
                     if (res.meta.code === 6666) {
-                        console.log("row",this.$refs.tableRef.tableData[this.editObjIndex]);
-                        console.log("editForm",this.editForm);
+                        console.log(
+                            "row",
+                            this.$refs.tableRef.tableData[this.editObjIndex]
+                        );
+                        console.log("editForm", this.editForm);
                         let newObj = Object.assign(
                             this.$refs.tableRef.tableData[this.editObjIndex],
                             this.editForm
                         );
-                        console.log("newObj",newObj);
+                        console.log("newObj", newObj);
                         this.$refs.tableRef.tableData.splice(
                             this.editObjIndex,
                             1,
@@ -335,7 +345,7 @@ export default {
         },
         // 增加相关
         add() {
-            this.addFormVisible = true;
+            this.treeVisible = true;
         },
         addFormSubmit() {
             console.log(this.addForm);
@@ -345,17 +355,20 @@ export default {
                 data: this.addForm,
             })
                 .then((res) => {
-                    if (res){
-                        if (res.meta.code === 6666){
+                    if (res) {
+                        if (res.meta.code === 6666) {
                             this.$message.info("增加角色信息成功！");
                             this.getTableData();
-                        }else{
-                            this.$message.error("增加角色信息失败，错误信息：" + res.meta.msg);
+                        } else {
+                            this.$message.error(
+                                "增加角色信息失败，错误信息：" + res.meta.msg
+                            );
                         }
-                    }else{
-                        this.$message.error("增加角色信息失败，返回信息：" + res);
+                    } else {
+                        this.$message.error(
+                            "增加角色信息失败，返回信息：" + res
+                        );
                     }
-                    
                 })
                 .catch((err) => {
                     this.$message.error(`新增用户信息失败：${err.meta.msg}`);
@@ -434,16 +447,21 @@ export default {
                 url: `http://127.0.0.1:8080/user/role/${username}`,
             })
                 .then((res) => {
-                    console.log("getRole:",res);
+                    console.log("getRole:", res);
                     if (res) {
                         if (res.meta.code === 6666) {
                             this.roleAssigns = res.data.roles;
                             this.getRoleListData();
-                        }else{
-                            this.$message.info("获取用户已经授权的角色列表出错，错误信息：" + res.meta.msg);
+                        } else {
+                            this.$message.info(
+                                "获取用户已经授权的角色列表出错，错误信息：" +
+                                    res.meta.msg
+                            );
                         }
-                    }else{
-                        this.$message.info("获取用户已经授权的角色列表，请求出错");
+                    } else {
+                        this.$message.info(
+                            "获取用户已经授权的角色列表，请求出错"
+                        );
                     }
                 })
                 .catch((err) => {
@@ -454,33 +472,39 @@ export default {
         },
         assignFormSubmit() {
             //此处处理选中的角色，更新用户相关信息
-            let newRoleList = this.roleAssignMultipleSelection.map((item, index, arr) => {
-                return item.rid;
-            }).join(",");
+            let newRoleList = this.roleAssignMultipleSelection
+                .map((item, index, arr) => {
+                    return item.rid;
+                })
+                .join(",");
             this.$axios({
                 url: `http://127.0.0.1:8080/user/authority/rolelist`,
                 method: "put",
                 data: {
                     uid: this.roleAssignForm.uid.toString(),
-                    rids: newRoleList
+                    rids: newRoleList,
                 },
-            }).then((res) => {
-                console.log(res);
-                if (res){
-                    if (res.meta.code === 6666){
-                        this.$message.info("更新用户授权角色列表成功！");
-                    }else{
-                        this.$message.info("更新用户授权角色列表失败：" + res.meta.msg);
+            })
+                .then((res) => {
+                    console.log(res);
+                    if (res) {
+                        if (res.meta.code === 6666) {
+                            this.$message.info("更新用户授权角色列表成功！");
+                        } else {
+                            this.$message.info(
+                                "更新用户授权角色列表失败：" + res.meta.msg
+                            );
+                        }
                     }
-                }
-            }).catch((err) => {
-                this.$message.error(`更新用户授权角色列表失败：${err.meta.msg}`);
-            });
+                })
+                .catch((err) => {
+                    this.$message.error(
+                        `更新用户授权角色列表失败：${err.meta.msg}`
+                    );
+                });
             this.roleAssignVisible = false;
         },
-
-
-    }
+    },
 };
 </script>
 
