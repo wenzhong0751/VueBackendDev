@@ -1,0 +1,62 @@
+/* Colors
+-------------------------- */
+$--color-white: #fff !default;
+$--color-black: #000 !default;
+
+$--color-primary: #409EFF !default;
+$--color-primary-light-1: mix($--color-white, $--color-primary, 10%) !default; /* 53a8ff */
+$--color-primary-light-2: mix($--color-white, $--color-primary, 20%) !default; /* 66b1ff */
+$--color-primary-light-3: mix($--color-white, $--color-primary, 30%) !default; /* 79bbff */
+$--color-primary-light-4: mix($--color-white, $--color-primary, 40%) !default; /* 8cc5ff */
+$--color-primary-light-5: mix($--color-white, $--color-primary, 50%) !default; /* a0cfff */
+$--color-primary-light-6: mix($--color-white, $--color-primary, 60%) !default; /* b3d8ff */
+$--color-primary-light-7: mix($--color-white, $--color-primary, 70%) !default; /* c6e2ff */
+$--color-primary-light-8: mix($--color-white, $--color-primary, 80%) !default; /* d9ecff */
+$--color-primary-light-9: mix($--color-white, $--color-primary, 90%) !default; /* ecf5ff */
+
+$--color-success: #67c23a !default;
+$--color-warning: #e6a23c !default;
+$--color-danger: #f56c6c !default;
+$--color-info: #909399 !default;
+
+
+
+$--color-text-primary: #303133 !default;
+$--color-text-regular: #606266 !default;
+$--color-text-secondary: #909399 !default;
+$--color-text-placeholder: #c0c4cc !default;
+
+/* Menu
+--------------------------*/
+$--menu-item-color: $--color-text-primary !default;
+$--menu-item-fill: $--color-white !default;
+$--menu-item-hover-fill: $--color-primary-light-9 !default;
+
+/* Tag
+-------------------------- */
+$--tag-padding: 0 10px !default;
+$--tag-fill: rgba($--color-primary, 0.10) !default;
+$--tag-color: $--color-primary !default;
+$--tag-border: rgba($--color-primary, 0.20) !default;
+$--tag-font-size: 12px !default;
+$--tag-border-radius: 4px !default;
+
+$--tag-info-fill: rgba($--color-info, 0.10) !default;
+$--tag-info-border: rgba($--color-info, 0.20) !default;
+$--tag-info-color: $--color-info !default;
+
+$--tag-primary-fill: rgba($--color-primary, 0.10) !default;
+$--tag-primary-border: rgba($--color-primary, 0.20) !default;
+$--tag-primary-color: $--color-primary !default;
+
+$--tag-success-fill: rgba($--color-success, 0.10) !default;
+$--tag-success-border: rgba($--color-success, 0.20) !default;
+$--tag-success-color: $--color-success !default;
+
+$--tag-warning-fill: rgba($--color-warning, 0.10) !default;
+$--tag-warning-border: rgba($--color-warning, 0.20) !default;
+$--tag-warning-color: $--color-warning !default;
+
+$--tag-danger-fill: rgba($--color-danger, 0.10) !default;
+$--tag-danger-border: rgba($--color-danger, 0.20) !default;
+$--tag-danger-color: $--color-danger !default;
