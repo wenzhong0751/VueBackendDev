@@ -54,7 +54,6 @@ router.beforeEach((to, from, next) => {
     // debugger
     console.log("Auth.isLogin()=" + Auth.isLogin());
     if (Auth.isLogin()) {
-        console.log("logined");
         // 如果当前处于登录状态，并且跳转地址为login，则自动跳回系统首页
         // 这种情况出现在手动修改地址栏地址时
         console.log("to.path=" + to.path);
