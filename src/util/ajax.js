@@ -12,6 +12,7 @@ import Auth from "@/util/auth";
 var getTokenLock = false,
     CancelToken = axios.CancelToken,
     requestList = [];
+const backendUrl = '/api';  // 后端在nginx中的映射地址
 
 /**
  * Token校验
@@ -25,8 +26,37 @@ function checkTokenSwz(cancel, callback) {
     console.log("hasJwt",Auth.hasJwt());
     if (!Auth.hasJwt()) {
         console.log("jwt missing, refresh jwt");
+        // 自动获取Token
+        console.log("即将获取token");
+        if (Auth.tokenTimeoutMethod == "getNewToken") {
+            // 如果当前有请求正在获取Token
+            console.log("使用getNewToken");
+            if (getTokenLock) {
+                console.log("getTokenLock = ture");
+                setTimeout(function() {
+                    checkTokenSwz(cancel, callback);
+                }, 500);
+            } else {
+                getTokenLock = true;
+                console.log("加锁，使用getNewToken");
+                store.dispatch("auth/getNewToken").then(() => {
+                    console.log("已获取新token");
+                    callback();
+                    getTokenLock = false;
+                });
+            }
+        }
+
+        // 跳转授权Token
+        if (Auth.tokenTimeoutMethod == "jumpAuthPage" && Auth.isLogin()) {
+            if (router.currentRoute.path != "/auth") {
+                // BUG: 无法保证一定会中断所有请求
+                cancel();
+                router.push("/auth");
+            }
+        }
     } else {
-        console.log("has jwt. continue...");
+        console.log("token未过期，继续执行");
         callback();
     }
 }
@@ -100,7 +130,9 @@ function stopRepeatRequest(url, c) {
 // 超时设置
 const service = axios.create({
     // 请求超时时间
-    timeout: 5000
+    timeout: 1000*5,
+    //baseURL: 'http://127.0.0.1:8080'
+    baseURL:backendUrl
 });
 
 // baseURL
@@ -114,6 +146,7 @@ service.interceptors.request.use(
         config.cancelToken = new CancelToken(function executor(c) {
             cancel = c;
         });
+        console.log("url =" + config.url);
         if (config.url.endsWith("tokenKey=get") || config.url.endsWith("account/login")){
             console.log("to login,skip jwt check.")
         }else{
@@ -143,6 +176,12 @@ service.interceptors.request.use(
 service.interceptors.response.use(
     response => {
         let rtnObj = response.data;
+        let respUrl = response.config.url;
+        if (respUrl.startsWith(backendUrl)){
+            respUrl = respUrl.substring(backendUrl.length);
+        }
+        console.log("response.config.url:" + response.config.url);
+        console.log("respUrl=" + respUrl);
         if (rtnObj){
             if (rtnObj.meta.code === 1005){
                 // jwt过期，需要刷新
@@ -150,18 +189,19 @@ service.interceptors.response.use(
                 console.log("refresh newJwt",newJwt);
                 store.commit("auth/setJwt",newJwt);
                 let config = response.config;
-                requestList.splice(requestList.findIndex(item => item === response.config.url), 1);
+                requestList.splice(requestList.findIndex(item => item === respUrl), 1);
                 return service.request(config);
             }
         }
         
+        
         for (let i = 0; i < requestList.length; i++) {
             console.log("list url:" + requestList[i]);
-            if (requestList[i] == response.config.url) {
+            if (requestList[i] == respUrl) {
                 // 注意，不能保证500ms必定执行，详情请了解JS的异步机制
                 setTimeout(function() {
-                    console.log("remove url:" + requestList[requestList.findIndex(item => item === response.config.url)],requestList.findIndex(item => item === response.config.url),response.config.url);
-                    requestList.splice(requestList.findIndex(item => item === response.config.url), 1);
+                    console.log("remove url:" + requestList[requestList.findIndex(item => item === respUrl)],requestList.findIndex(item => item === respUrl),respUrl);
+                    requestList.splice(requestList.findIndex(item => item === respUrl), 1);
                 }, 500);
                 break;
             }

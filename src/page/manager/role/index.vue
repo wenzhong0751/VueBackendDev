@@ -325,7 +325,7 @@ export default {
         getTableData() {
             let { pageSize, pageNumber, rid } = this.searchForm;
             this.$axios({
-                url: `http://127.0.0.1:8080/role/list/${pageNumber}/${pageSize}`,
+                url: `/role/list/${pageNumber}/${pageSize}`,
                 type: "get",
                 params: { rid: `${rid}` },
             })
@@ -375,7 +375,7 @@ export default {
         },
         editFormSubmit() {
             this.$axios({
-                url: `http://127.0.0.1:8080/role`,
+                url: `/role`,
                 method: "put",
                 data: this.editForm,
             })
@@ -415,7 +415,7 @@ export default {
         addFormSubmit() {
             console.log(this.addForm);
             this.$axios({
-                url: `http://127.0.0.1:8080/role`,
+                url: `/role`,
                 method: "post",
                 data: this.addForm,
             })
@@ -446,7 +446,7 @@ export default {
             let { rid, status } = row;
             let newInfo = { rid, status };
             this.$axios({
-                url: `http://127.0.0.1:8080/role`,
+                url: `/role`,
                 method: "put",
                 data: {
                     rid: `${rid}`,
@@ -510,7 +510,7 @@ export default {
             this.assignMenuDlgTitle = "为角色[" + rid + "]分配菜单";
             //获取用户授权的角色列表
             this.$axios({
-                url: `http://127.0.0.1:8080/resource/menus`,
+                url: `/resource/menus`,
             })
                 .then((res) => {
                     console.log("getMenus:", res);
@@ -554,7 +554,7 @@ export default {
                             this.menuData = newArr;
 
                             this.$axios({
-                                url: `http://localhost:8080/role/menu/${rid}/0/1000`,
+                                url: `/role/menu/${rid}/0/1000`,
                             })
                                 .then((res) => {
                                     console.log("roleHasMenus", res);
@@ -620,7 +620,7 @@ export default {
             console.log(newMenuList);
             newMenuList = newMenuList.join(",");
             this.$axios({
-                url: `http://127.0.0.1:8080/role/authority/resourcelist`,
+                url: `/role/authority/resourcelist`,
                 method: "put",
                 data: {
                     roleId: this.assignRoleId,
@@ -657,7 +657,7 @@ export default {
             this.assignApiDlgTitle = "为角色[" + rid + "]分配API";
             
             this.$axios({
-                url: `http://127.0.0.1:8080/role/api/${rid}/1/1000`,
+                url: `/role/api/${rid}/1/1000`,
             })
                 .then((res) => {
                     console.log("getHasAPI", res);
@@ -685,7 +685,7 @@ export default {
                 })
                 .join(",");
             this.$axios({
-                url: `http://127.0.0.1:8080/user/authority/rolelist`,
+                url: `/user/authority/rolelist`,
                 method: "put",
                 data: {
                     uid: this.roleAssignForm.uid.toString(),
@@ -718,7 +718,7 @@ export default {
         loadApiNode(node, resolve) {
             if (node.level === 0) {
                 this.$axios({
-                    url: `http://127.0.0.1:8080/resource/api/-1/1/1000`,
+                    url: `/resource/api/-1/1/1000`,
                 })
                     .then((res) => {
                         console.log("getApi-1:", res);
@@ -755,7 +755,7 @@ export default {
                 let nodeKey = node.key;
                 console.log("key", nodeKey);
                 this.$axios({
-                    url: `http://127.0.0.1:8080/resource/api/${nodeKey}/1/1000`,
+                    url: `/resource/api/${nodeKey}/1/1000`,
                 })
                     .then((res) => {
                         console.log("getApiByPid:", res);
@@ -808,7 +808,7 @@ export default {
             let resourceId = data.rid + "";
             let roleId = this.assignRoleId;
             this.$axios({
-                url: `http://127.0.0.1:8080/role/authority/resource`,
+                url: `/role/authority/resource`,
                 method: "post",
                 data:{
                     roleId,
@@ -831,7 +831,7 @@ export default {
             let resourceId = data.rid;
             let roleId = this.assignRoleId;
             this.$axios({
-                url: `http://127.0.0.1:8080/role/authority/resource/${roleId}/${resourceId}`,
+                url: `/role/authority/resource/${roleId}/${resourceId}`,
                 method: "delete"
             }).then((res) => {
                 console.log("revoke res:",res);
@@ -852,7 +852,7 @@ export default {
                     let resourceId = data.rid + "";
                     let roleId = this.assignRoleId;
                     this.$axios({
-                        url: `http://127.0.0.1:8080/role/authority/resource`,
+                        url: `/role/authority/resource`,
                         method: "post",
                         data:{
                             roleId,
@@ -872,7 +872,7 @@ export default {
                     let resourceId = data.rid;
                     let roleId = this.assignRoleId;
                     this.$axios({
-                        url: `http://127.0.0.1:8080/role/authority/resource/${roleId}/${resourceId}`,
+                        url: `/role/authority/resource/${roleId}/${resourceId}`,
                         method: "delete"
                     }).then((res) => {
                         console.log("revoke res:",res);

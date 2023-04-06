@@ -420,7 +420,7 @@ export default {
             let { pageSize, pageNumber, status} = this.roleAssignForm;
             console.log(this.roleAssignForm);
             this.$axios({
-                url: `http://127.0.0.1:8080/role/list/${pageNumber}/${pageSize}`,
+                url: `/role/list/${pageNumber}/${pageSize}`,
                 type: "get",
                 params: { status: `${status}` },
             })
@@ -470,7 +470,7 @@ export default {
             let { pageSize, pageNumber, username } = this.searchForm;
             console.log(username);
             this.$axios({
-                url: `http://127.0.0.1:8080/user/list/${pageNumber}/${pageSize}`,
+                url: `/user/list/${pageNumber}/${pageSize}`,
                 type: "get",
                 params: { username: `${username}` },
             })
@@ -529,7 +529,7 @@ export default {
         },
         editFormSubmit() {
             this.$axios({
-                url: `http://127.0.0.1:8080/user`,
+                url: `/user`,
                 method: "put",
                 data: this.editForm,
             })
@@ -564,7 +564,7 @@ export default {
         addFormSubmit() {
             console.log(this.addForm);
             this.$axios({
-                url: `http://127.0.0.1:8080/user`,
+                url: `/user`,
                 method: "post",
                 data: this.addForm,
             })
@@ -583,7 +583,7 @@ export default {
             let { uid, disabled } = row;
             let newInfo = { uid, disabled };
             this.$axios({
-                url: `http://127.0.0.1:8080/user`,
+                url: `/user`,
                 method: "put",
                 data: {
                     uid: `${uid}`,
@@ -647,7 +647,7 @@ export default {
             this.roleAssignForm.uid = row.uid;
             //获取用户授权的角色列表
             this.$axios({
-                url: `http://127.0.0.1:8080/user/role/${username}`,
+                url: `/user/role/${username}`,
             })
                 .then((res) => {
                     console.log("getRole:",res);
@@ -674,7 +674,7 @@ export default {
                 return item.rid;
             }).join(",");
             this.$axios({
-                url: `http://127.0.0.1:8080/user/authority/rolelist`,
+                url: `/user/authority/rolelist`,
                 method: "put",
                 data: {
                     uid: this.roleAssignForm.uid.toString(),
@@ -718,7 +718,7 @@ export default {
                 .then(() => {
                     // 向服务端请求
                     this.$axios({
-                        url: `http://127.0.0.1:8080/user`,
+                        url: `/user`,
                         method: "delete",
                         data: row,
                     })

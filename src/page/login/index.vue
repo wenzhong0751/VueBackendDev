@@ -127,7 +127,7 @@ export default {
                         name: this.loginForm.name,
                         password: this.loginForm.password
                     }).then(res => {
-                        console.log("loginForm.res" + res);
+                        console.log("loginForm.res" , res);
                         if (res.meta.success) {
                             console.log("login success.")
                             this.$router.push("home");

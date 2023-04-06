@@ -79,7 +79,7 @@ const actions = {
                         return data;
                     }
                 ],
-                url: "http://127.0.0.1:8080/account/register?tokenKey=get",
+                url: "/account/register?tokenKey=get",
                 method: "get"
             }).then(res => {
                 resolve(res);
@@ -101,7 +101,7 @@ const actions = {
                     let date2 = Date.parse(date1) / 1000;
 
                     return axios({
-                        url: "http://127.0.0.1:8080/account/login",
+                        url: "/account/login",
                         method: "post",
                         data: {
                             appId: userInfo.name,
@@ -137,7 +137,7 @@ const actions = {
                         return data;
                     }
                 ],
-                url: "http://127.0.0.1:8080/user/exit",
+                url: "/user/exit",
                 method: "post"
             }).then(res => {
                 console.log("exit res",res);
@@ -152,6 +152,7 @@ const actions = {
     // 重新获取用户信息及Token
     // TODO: 这里不需要提供用户名和密码，实际中请根据接口自行修改
     relogin({ dispatch, commit, state }) {
+        console.log('relogin called.')
         return new Promise(resolve => {
             // 根据Token进行重新登录
             let token = Cookies.get("token"),
@@ -175,6 +176,7 @@ const actions = {
 
     // 获取新Token
     getNewToken({ commit, state }) {
+        console.log('getNewToken called.')
         return new Promise(resolve => {
             axios({
                 url: "/getToken",
@@ -194,7 +196,7 @@ const actions = {
     getNavList({ commit }) {
         return new Promise(resolve => {
             axios({
-                url: "http://127.0.0.1:8080/resource/authorityMenu",
+                url: "/resource/authorityMenu",
                 method: "get"
             }).then(res => {
                 console.log("getMenu res1:", res);

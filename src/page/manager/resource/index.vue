@@ -43,7 +43,7 @@ export default {
         //查询主界面表格数据
         getTableData() {
             this.$axios({
-                url: `http://127.0.0.1:8080/resource/menus`,
+                url: `/resource/menus`,
             })
                 .then((res) => {
                     console.log("getMenu res:", res);

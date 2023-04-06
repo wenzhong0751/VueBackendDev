@@ -97,7 +97,7 @@ export default {
             let pageSize = this.pageSize;
             let logName = this.logType === '1'?'accountLog':'operationLog';
             this.$axios({
-                url: `http://127.0.0.1:8080/log/${logName}/${pageNum}/${pageSize}`,
+                url: `/log/${logName}/${pageNum}/${pageSize}`,
                 type: "get"
             })
                 .then((res) => {

@@ -14,6 +14,8 @@ import App from './index'
 import './components/install'
 import './plugins/install'
 
+import 'sysStatic/icon/iconfont.css'
+
 // 注册组件到Vue
 Vue.prototype.$axios = axios
 Vue.use(ElementUI, {

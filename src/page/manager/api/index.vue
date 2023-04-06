@@ -47,7 +47,7 @@ export default {
         //查询主界面表格数据
         getTableData() {
             this.$axios({
-                url: `http://127.0.0.1:8080/resource/api/-1/1/1000`,
+                url: `/resource/api/-1/1/1000`,
             })
                 .then((res) => {
                     console.log("get apiTerm:", res);
@@ -107,7 +107,7 @@ export default {
             console.log("treeNode",treeNode);
             let rid = tree.rid;
             this.$axios({
-                url: `http://127.0.0.1:8080/resource/api/${rid}/1/1000`,
+                url: `/resource/api/${rid}/1/1000`,
             }).then(res => {
                 console.log("res",res);
                 if (res){
